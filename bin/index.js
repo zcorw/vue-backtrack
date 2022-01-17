@@ -4,9 +4,15 @@ import newGroup from './newGroup';
 const BackTrack = {};
 BackTrack.install = function(Vue, options) {
   Vue.prototype.$createGroup = function(dataList) {
-    return newGroup(dataList).map((track) => {
-      return Vue.observable(track);
+    const group = Vue.observable(newGroup(dataList));
+    group.onTrack(() => {
+      group.dep.notify();
     });
+    return group;
+  };
+  Vue.prototype.$createTrack = function(list) {
+    const track = Vue.observable(newTrack(list));
+    return track;
   }
 }
 

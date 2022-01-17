@@ -3,6 +3,7 @@ export const Data = {
   _singletracks: () => [],
   trackIndex: () => 0,
   track: () => [],
+  trackCallback: () => null,
 };
 
 export const Methods = {
@@ -16,9 +17,14 @@ export const Methods = {
       }
       this.track.splice(0, this.trackIndex);
       this.track.unshift(this._singletracks);
+      this.trackCallback && this.trackCallback(this._singletracks);
       this.trackIndex = 0;
       this._singletracks = [];
     });
+  },
+  clearCommand() {
+    this.track = [];
+    this.trackIndex = 0;
   },
   // 撤回
   undo() {
@@ -42,7 +48,10 @@ export const Methods = {
     });
     this.trackIndex--;
   },
-  createTrack,
+  bind,
+  onTrack(callback) {
+    return (...args) => callback(...args);
+  }
 }
 
 export const Computed = {
@@ -56,8 +65,8 @@ export const Computed = {
 
 const methodsToPatch = ['insert', 'replace', 'delete', 'swap'];
 
-function createTrack(item, i) {
-  const track = new newTrack(item);
+function bind(track, i) {
+  this.splice(i, 1, track);
   methodsToPatch.forEach((method) => {
     const func = track[method];
     track[method] = (...args) => {
@@ -68,8 +77,7 @@ function createTrack(item, i) {
 }
 
 export default function newGroup(list) {
-  const track = list;
-  list.forEach(createTrack.bind(track));
+  const track = [];
   
   for (let key in Methods) {
     Object.defineProperty(track, key, {
@@ -94,5 +102,8 @@ export default function newGroup(list) {
       enumerable: false,
     })
   }
+  list.forEach((item, i) => {
+    track.bind(newTrack(item), i);
+  })
   return track;
 }
