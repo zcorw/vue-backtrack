@@ -9,7 +9,7 @@ export const Data = {
 export const Methods = {
   newCommand(index) {
     if (!this._singletracks.includes(index)) {
-      this._singletracks.push(index);
+      this._singletracks.unshift(index);
     }
     Promise.resolve().then(() => {
       if (this._singletracks.length === 0) {

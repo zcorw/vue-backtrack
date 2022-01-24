@@ -23,9 +23,21 @@ function swap(index1, index2, arr) {
   arr.splice(index1, 1, val2);
   arr.splice(index2, 1, val1);
 }
+// 在逐个删除时数组中的下标可能会随着上个删除对象下标有可能会变化，
+// 如果当前要删除的下标比前面的下标大就减1
+function deleteArray(indexs) {
+  if (!Array.isArray(indexs)) {
+    throw new TypeError('index is not a Array')
+  }
+  return indexs.reduceRight((res, index, i) => {
+    const _index = indexs.slice(0, i).reduce((_res, cur) => cur < index ? _res - 1 : _res, index)
+    return [_index].concat(res);
+  }, []);
+}
+
 export const Methods = {
   newCommand (track) {
-    this._singletracks.push(track);
+    this._singletracks.unshift(track);
     Promise.resolve().then(() => {
       if (this._singletracks.length === 0) {
         return;
@@ -72,16 +84,20 @@ export const Methods = {
   },
   // 删除原数组第index位的元素
   delete(index) {
-    if (typeof index !== 'number') {
+    if (typeof index !== 'number' && !Array.isArray(index)) {
       throw new TypeError('index is not a number');
     }
-    const original = this[index];
-    del(index, this);
-    this.newCommand({
-      type: COMMAND.delete,
-      index,
-      original,
-    });
+    if (Array.isArray(index)) {
+      deleteArray(index).forEach((i) => this.delete(i))
+    } else {
+      const original = this[index];
+      del(index, this);
+      this.newCommand({
+        type: COMMAND.delete,
+        index,
+        original,
+      });
+    }
     return this;
   },
   // 交换原数组第index1和index2位的元素
