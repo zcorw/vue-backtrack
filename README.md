@@ -35,7 +35,7 @@ const track = this.$createTrack([...]);
 |:----:|:----:|:----:|:----:|
 |insert| 向原数组的第index位插入value，index为空时向数组尾部插入 |value, index|any, number|
 | replace| 对原数组第index位的元素进行替换（数组中的元素都是不可变对象，想要修改数组中的元素请重新传入新对象） |value, index |any, number|
-| delete | 删除原数组第index位的元素 | index |number|
+| delete | 删除原数组第index位的元素 | index OR index[] |number OR number[]|
 | swap | 交换原数组第index1和index2位的元素 | index1, index2 |number,number|
 | undo | 撤回 | - | - |
 | redo | 恢复 | - | - |
@@ -50,3 +50,6 @@ const track = this.$createTrack([...]);
 ## Demo
 yarn 
 yarn start
+
+## 单元测试
+yarn unit
