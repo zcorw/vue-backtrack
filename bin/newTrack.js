@@ -150,7 +150,7 @@ export const Methods = {
       return this;
     }
     const tracks = this.track[this.trackIndex - 1];
-    tracks.forEach((track) => {
+    tracks.reverse().forEach((track) => {
       const index = track.index;
       switch (track.type) {
         case COMMAND.insert:

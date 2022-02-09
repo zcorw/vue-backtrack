@@ -43,7 +43,7 @@ export const Methods = {
       return;
     }
     const tracks = this.track[this.trackIndex - 1];
-    tracks.forEach((index) => {
+    tracks.reverse().forEach((index) => {
       this[index].redo();
     });
     this.trackIndex--;
